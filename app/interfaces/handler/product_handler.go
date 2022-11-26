@@ -16,9 +16,19 @@ func NewProductController(productService *usecases.ProductUsecase) ProductContro
 	return ProductController{ProductService: *productService}
 }
 
-func (controller *ProductController) Route(app *fiber.App) {
-	app.Post("/api/products", controller.Create)
-	app.Get("/api/products", controller.List)
+func (handler *ProductController) Route(app *fiber.App) {
+	app.Get("/", func(c *fiber.Ctx) error {
+		c.JSON(model.WebResponse{
+			Code:   200,
+			Status: "OK",
+			Data: map[string]string{
+				"Service": "GO CLARCH IS RUNNING",
+			},
+		})
+		return nil
+	})
+	app.Post("/api/products", handler.Create)
+	app.Get("/api/products", handler.List)
 }
 
 func (controller *ProductController) Create(c *fiber.Ctx) error {

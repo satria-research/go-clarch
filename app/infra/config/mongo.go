@@ -2,11 +2,13 @@ package config
 
 import (
 	"context"
+	"log"
+	"strconv"
+	"time"
+
 	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"strconv"
-	"time"
 )
 
 func NewMongoDatabase(configuration Config) *mongo.Database {
@@ -29,10 +31,17 @@ func NewMongoDatabase(configuration Config) *mongo.Database {
 		SetMaxConnIdleTime(time.Duration(mongoMaxIdleTime) * time.Second)
 
 	client, err := mongo.NewClient(option)
-	exception.PanicIfNeeded(err)
+	if err != nil {
+		panic("Failed to connect to database!")
+	}
 
 	err = client.Connect(ctx)
+	if err != nil {
+		panic("Failed to connect to database!")
+	}
 	exception.PanicIfNeeded(err)
+
+	log.Println("Connected to MongoDB success")
 
 	database := client.Database(configuration.Get("MONGO_DATABASE"))
 	return database

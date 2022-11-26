@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Setup Configuration
-	configuration := config.New()
+	configuration := config.New(".env")
 	database := config.NewMongoDatabase(configuration)
 
 	// Setup Repository
