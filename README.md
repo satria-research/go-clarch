@@ -5,11 +5,12 @@
 
 ## 📖 Contains
 
-- [The 4 Layer](#the-layer)
-- [Fiber Go web framework](#fiber-go)
-- [Air live reloading](#air)
-- [Postman Docs](#postman-docs)
-- [References](#references)
+- [The 4 Layer](#-the-layer)
+- [Fiber Go web framework](#-fiber-go)
+- [Air live reloading](#-air)
+- [Debugger](#-debugger)
+- [Postman Docs](#-postman-docs)
+- [References](#-references)
 
 ## 🍰 The Layer
 
@@ -30,6 +31,12 @@ Why fiber? learn [here](https://gofiber.io/)
 If you familiar with nodemon in nodejs, air is exactly same. Provide hot reloading when files change with auto build.
 
 Visit: https://github.com/cosmtrek/air for installation guide
+
+## 🧪 Debugger
+
+If you come from PHP maybe you use var_dump(), if u from javasript maybe u use console.log(), in GO u can use fmt.Println().
+
+But if u don't know before, using debugger is awesome and helpful (If u use VS Code), u just go to debug and run the debugger. The config in .vscode in the project. Wanna try? Learn [here](https://medium.com/@slamflipstrom/debugging-with-visual-studio-code-857904a8a590)
 
 ## 🔖 Postman Docs
 
