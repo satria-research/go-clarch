@@ -1,7 +1,7 @@
 # GO CLARCH
 
 > Go Clean Architecture Boilerplate
-> New to Clean Architecture? [Learn Here](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+> New to Clean Architecture? [Learn Here](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) > [![Go Report Card](https://goreportcard.com/badge/github.com/ubaidillahhf/go-clarch)](https://goreportcard.com/report/github.com/ubaidillahhf/go-clarch)
 
 ## 📖 Contains
 
