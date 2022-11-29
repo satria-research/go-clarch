@@ -47,3 +47,5 @@ But if u don't know before, using debugger is awesome and helpful (If u use VS C
 ## 📚 References
 
 - https://github.com/khannedy/golang-clean-architecture
+- https://github.com/evrone/go-clean-template
+- https://github.com/Creatly/creatly-backend
