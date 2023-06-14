@@ -39,7 +39,6 @@ Changes to packages from third parties are also a challenge, such as changing th
 - ### Why using json validator than others for request validator ? \
 
   Request validator have several option u can see [here](https://daltontan.com/comparison-of-golang-input-validator-libraries/29/).
-
   We use [go-playground/validator](github.com/go-playground/validator/v10) because is very simple and clean, bcs just put in json tag, that(json tag) is familiar in go.
 
 - ### Why separate file interface, implementation in Usecase and Frameworks & Drivers layer ? \
