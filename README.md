@@ -32,10 +32,10 @@ Changes to packages from third parties are also a challenge, such as changing th
 
 ## 🧐 The Questions
 
-- Why placing all layer to one folder (app)?
+- Why placing all layer to one folder (app)? \
   Bcs using this infrastructure (clean architecture), we must highlight the 4 layer in folder and ensure the concept is clean (no other file or folder).
 
-- Why separate file interface, implementation in Usecase and Frameworks & Drivers layer ?
+- Why separate file interface, implementation in Usecase and Frameworks & Drivers layer ? \
   The concept come from [Bridge Design Pattern](https://refactoring.guru/design-patterns/bridge/go/example), in Usecase imagine u have 2 user (student and teacher) with same action but different behavior (bcs business rules), in Frameworks & Drivers imagine u must transition change the db from Postgres to Mongo.
 
 ## ⚡ Fiber Go
