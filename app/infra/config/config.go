@@ -1,9 +1,10 @@
 package config
 
 import (
+	"os"
+
 	"github.com/joho/godotenv"
 	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
-	"os"
 )
 
 type Config interface {

@@ -7,7 +7,7 @@ import (
 	"github.com/ubaidillahhf/go-clarch/app/interfaces/validation"
 )
 
-func NewProductUsecase(productRepository *repository.ProductRepository) ProductUsecase {
+func NewProductUsecase(productRepository *repository.ProductRepository) IProductUsecase {
 	return &productUsecaseImpl{
 		ProductRepository: *productRepository,
 	}

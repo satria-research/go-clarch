@@ -9,26 +9,11 @@ import (
 )
 
 type ProductController struct {
-	ProductService usecases.ProductUsecase
+	ProductService usecases.IProductUsecase
 }
 
-func NewProductController(productService *usecases.ProductUsecase) ProductController {
+func NewProductController(productService *usecases.IProductUsecase) ProductController {
 	return ProductController{ProductService: *productService}
-}
-
-func (handler *ProductController) Route(app *fiber.App) {
-	app.Get("/", func(c *fiber.Ctx) error {
-		c.JSON(model.ApiResponse{
-			Code:   200,
-			Status: "OK",
-			Data: map[string]string{
-				"Service": "GO CLARCH IS RUNNING",
-			},
-		})
-		return nil
-	})
-	app.Post("/api/products", handler.Create)
-	app.Get("/api/products", handler.List)
 }
 
 func (controller *ProductController) Create(c *fiber.Ctx) error {
