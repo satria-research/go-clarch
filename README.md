@@ -36,13 +36,12 @@ Changes to packages from third parties are also a challenge, such as changing th
 
   Bcs using this infrastructure (clean architecture), we must highlight the 4 layer in folder and ensure the concept is clean (no other file or folder).
 
-- ### Why using json validator than others for request validator ? \
+- ### Why using json validator than others for request validator? \
 
   Request validator have several option u can see [here](https://daltontan.com/comparison-of-golang-input-validator-libraries/29/).
   We use [go-playground/validator](github.com/go-playground/validator/v10) because is very simple and clean, bcs just put in json tag, that(json tag) is familiar in go.
 
-- ### Why separate file interface, implementation in Usecase and Frameworks & Drivers layer ? \
-
+- ### Why separate file interface, implementation in Usecase and Frameworks & Drivers layer? \
   The concept come from [Bridge Design Pattern](https://refactoring.guru/design-patterns/bridge/go/example), in Usecase imagine u have 2 user (student and teacher) with same action but different behavior (bcs business rules), in Frameworks & Drivers imagine u must transition change the db from Postgres to Mongo.
 
 ## ⚡ Fiber Go
