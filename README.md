@@ -29,6 +29,14 @@ Changes to packages from third parties are also a challenge, such as changing th
 | Usecases             | /app/usecases      |
 | Entities             | /app/domain/entity |
 
+## 🧐 The Questions
+
+- Why placing all layer to one folder (app)?
+  Bcs using this infrastructure (clean architecture), we must highlight the 4 layer in folder and ensure the concept is clean (no other file or folder).
+
+- Why separate file interface, implementation in Usecase and Frameworks & Drivers layer ?
+  The concept come from [Bridge Design Pattern](https://refactoring.guru/design-patterns/bridge/go/example), in Usecase imagine u have 2 user (student and teacher) with same action but different behavior (bcs business rules), in Frameworks & Drivers imagine u must transition change the db from Postgres to Mongo.
+
 ## ⚡ Fiber Go
 
 We use fiber for routing and more, you can change whatever you like (echo, gin, chi, etc).
@@ -42,7 +50,7 @@ Visit: https://github.com/cosmtrek/air for installation guide
 
 ## 🧪 Debugger
 
-If you come from PHP maybe you use var_dump(), if u from javasript maybe u use console.log(), in GO u can use fmt.Println().
+If you come from PHP maybe you use var_dump(), if u from javasript maybe u use console.log(), in GO u can use fmt.Println() or u can use logging with log.Println().
 
 But if u don't know before, using debugger is awesome and helpful (If u use VS Code), u just go to debug and run the debugger. The config in .vscode in the project. Wanna try? Learn [here](https://medium.com/@slamflipstrom/debugging-with-visual-studio-code-857904a8a590)
 

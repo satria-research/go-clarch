@@ -18,7 +18,7 @@ func NewProductController(productService *usecases.ProductUsecase) ProductContro
 
 func (handler *ProductController) Route(app *fiber.App) {
 	app.Get("/", func(c *fiber.Ctx) error {
-		c.JSON(model.WebResponse{
+		c.JSON(model.ApiResponse{
 			Code:   200,
 			Status: "OK",
 			Data: map[string]string{
@@ -39,7 +39,7 @@ func (controller *ProductController) Create(c *fiber.Ctx) error {
 	exception.PanicIfNeeded(err)
 
 	response := controller.ProductService.Create(request)
-	return c.JSON(model.WebResponse{
+	return c.JSON(model.ApiResponse{
 		Code:   200,
 		Status: "OK",
 		Data:   response,
@@ -48,7 +48,7 @@ func (controller *ProductController) Create(c *fiber.Ctx) error {
 
 func (controller *ProductController) List(c *fiber.Ctx) error {
 	responses := controller.ProductService.List()
-	return c.JSON(model.WebResponse{
+	return c.JSON(model.ApiResponse{
 		Code:   200,
 		Status: "OK",
 		Data:   responses,

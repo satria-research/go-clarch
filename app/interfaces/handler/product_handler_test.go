@@ -31,7 +31,7 @@ func TestProductController_Create(t *testing.T) {
 	assert.Equal(t, 200, response.StatusCode)
 	responseBody, _ := ioutil.ReadAll(response.Body)
 
-	webResponse := model.WebResponse{}
+	webResponse := model.ApiResponse{}
 	json.Unmarshal(responseBody, &webResponse)
 	assert.Equal(t, 200, webResponse.Code)
 	assert.Equal(t, "OK", webResponse.Status)
@@ -63,7 +63,7 @@ func TestProductController_List(t *testing.T) {
 	assert.Equal(t, 200, response.StatusCode)
 	responseBody, _ := ioutil.ReadAll(response.Body)
 
-	webResponse := model.WebResponse{}
+	webResponse := model.ApiResponse{}
 	json.Unmarshal(responseBody, &webResponse)
 	assert.Equal(t, 200, webResponse.Code)
 	assert.Equal(t, "OK", webResponse.Status)
