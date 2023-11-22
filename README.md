@@ -61,10 +61,6 @@ If you come from PHP maybe you use var_dump(), if u from javasript maybe u use c
 
 But if u don't know before, using debugger is awesome and helpful (If u use VS Code), u just go to debug and run the debugger. The config in .vscode in the project. Wanna try? Learn [here](https://medium.com/@slamflipstrom/debugging-with-visual-studio-code-857904a8a590)
 
-## 🔖 Postman Docs
-
-- https://documenter.getpostman.com/view/21757760/2s8YstTZ9f
-
 ## 📚 References
 
 - https://github.com/khannedy/golang-clean-architecture

@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewMongoDatabase(configuration Config) *mongo.Database {
+func NewMongoDatabase(configuration IConfig) *mongo.Database {
 	ctx, cancel := NewMongoContext()
 	defer cancel()
 
@@ -48,5 +48,5 @@ func NewMongoDatabase(configuration Config) *mongo.Database {
 }
 
 func NewMongoContext() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), 10*time.Second)
+	return context.WithTimeout(context.Background(), 3*time.Second)
 }

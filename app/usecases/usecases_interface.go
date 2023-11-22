@@ -7,7 +7,7 @@ type AppUseCase struct {
 }
 
 func NewAppUseCase(
-	ProdukRepo repository.ProductRepository,
+	ProdukRepo repository.IProductRepository,
 ) AppUseCase {
 	return AppUseCase{
 		ProductUsecase: NewProductUsecase(&ProdukRepo),

@@ -10,7 +10,7 @@ import (
 	"github.com/ubaidillahhf/go-clarch/app/usecases"
 )
 
-func Init(useCase usecases.AppUseCase, conf config.Config) {
+func Init(useCase usecases.AppUseCase, conf config.IConfig) {
 	router := fiber.New(config.NewFiberConfig())
 
 	// middleware

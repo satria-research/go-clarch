@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func NewProductRepository(database *mongo.Database) ProductRepository {
+func NewProductRepository(database *mongo.Database) IProductRepository {
 	return &productRepositoryImpl{
 		Collection: database.Collection("products"),
 	}

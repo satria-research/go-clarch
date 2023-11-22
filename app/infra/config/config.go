@@ -7,7 +7,7 @@ import (
 	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
 )
 
-type Config interface {
+type IConfig interface {
 	Get(key string) string
 }
 
@@ -18,7 +18,7 @@ func (config *configImpl) Get(key string) string {
 	return os.Getenv(key)
 }
 
-func New(filenames ...string) Config {
+func New(filenames ...string) IConfig {
 	err := godotenv.Load(filenames...)
 	exception.PanicIfNeeded(err)
 	return &configImpl{}
