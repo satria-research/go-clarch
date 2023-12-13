@@ -27,13 +27,17 @@ func Init(useCase usecases.AppUseCase, conf config.IConfig) {
 	router.Use(allowCors, logging, recover.New())
 
 	// hadler
-	productHadler := handler.NewProductController(&useCase.ProductUsecase)
+	productHadler := handler.NewProductHandler(&useCase.ProductUsecase)
+	userHandler := handler.NewUserHandler(&useCase.UserUsecase)
 
 	// service route
 	router.Get("/", handler.GetTopRoute)
 
 	api := router.Group("/api")
 	v1 := api.Group("/v1")
+
+	user := v1.Group("/users")
+	user.Post("/register", userHandler.Register)
 
 	product := v1.Group("/products")
 	product.Get("/", productHadler.List)

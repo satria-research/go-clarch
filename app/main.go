@@ -14,10 +14,12 @@ func main() {
 
 	// Setup Repository
 	productRepository := repository.NewProductRepository(database)
+	userRepository := repository.NewUserRepository(database)
 
 	// Setup Service
 	useCase := usecases.NewAppUseCase(
 		productRepository,
+		userRepository,
 	)
 
 	router.Init(useCase, configuration)

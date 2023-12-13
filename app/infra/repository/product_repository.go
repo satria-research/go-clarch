@@ -16,16 +16,16 @@ type IProductRepository interface {
 }
 
 func NewProductRepository(database *mongo.Database) IProductRepository {
-	return &productRepositoryImpl{
+	return &productRepository{
 		Collection: database.Collection("products"),
 	}
 }
 
-type productRepositoryImpl struct {
+type productRepository struct {
 	Collection *mongo.Collection
 }
 
-func (repository *productRepositoryImpl) Insert(product domain.Product) (res domain.Product, err *exception.Error) {
+func (repository *productRepository) Insert(product domain.Product) (res domain.Product, err *exception.Error) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
@@ -50,7 +50,7 @@ func (repository *productRepositoryImpl) Insert(product domain.Product) (res dom
 	return product, nil
 }
 
-func (repository *productRepositoryImpl) FindAll() (res []domain.Product, err *exception.Error) {
+func (repository *productRepository) FindAll() (res []domain.Product, err *exception.Error) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
@@ -82,7 +82,7 @@ func (repository *productRepositoryImpl) FindAll() (res []domain.Product, err *e
 	return res, nil
 }
 
-func (repository *productRepositoryImpl) DeleteAll() *exception.Error {
+func (repository *productRepository) DeleteAll() *exception.Error {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 

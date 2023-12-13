@@ -12,16 +12,16 @@ type IProductUsecase interface {
 }
 
 func NewProductUsecase(productRepository *repository.IProductRepository) IProductUsecase {
-	return &productUsecaseImpl{
+	return &productUsecase{
 		ProductRepository: *productRepository,
 	}
 }
 
-type productUsecaseImpl struct {
+type productUsecase struct {
 	ProductRepository repository.IProductRepository
 }
 
-func (service *productUsecaseImpl) Create(request domain.CreateProductRequest) (res domain.Product, err *exception.Error) {
+func (service *productUsecase) Create(request domain.CreateProductRequest) (res domain.Product, err *exception.Error) {
 
 	newProduct := domain.Product{
 		Name:     request.Name,
@@ -37,7 +37,7 @@ func (service *productUsecaseImpl) Create(request domain.CreateProductRequest) (
 	return p, nil
 }
 
-func (service *productUsecaseImpl) List() (responses []domain.Product, err *exception.Error) {
+func (service *productUsecase) List() (responses []domain.Product, err *exception.Error) {
 	products, pErr := service.ProductRepository.FindAll()
 	if pErr != nil {
 		return responses, pErr

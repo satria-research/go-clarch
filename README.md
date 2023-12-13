@@ -20,6 +20,9 @@ Changes to packages from third parties are also a challenge, such as changing th
 - [Debugger](#-debugger)
 - [Postman Docs](#-postman-docs)
 - [References](#-references)
+- [JWT Middleware Implement] ⏳
+- [Unit Testing] ⏳
+- [IAM Feature] ⏳
 
 ## 🍰 The Layer
 
@@ -28,7 +31,7 @@ Changes to packages from third parties are also a challenge, such as changing th
 | Frameworks & Drivers | /app/infra         |
 | Interface            | /app/interfaces    |
 | Usecases             | /app/usecases      |
-| Entities             | /app/domain/entity |
+| Entities             | /app/domain        |
 
 ## 🧐 The Questions
 

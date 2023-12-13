@@ -9,15 +9,22 @@ import (
 	"github.com/ubaidillahhf/go-clarch/app/usecases"
 )
 
-type ProductController struct {
-	ProductService usecases.IProductUsecase
+type IProductHandler interface {
+	Create(c *fiber.Ctx) error
+	List(c *fiber.Ctx) error
 }
 
-func NewProductController(productService *usecases.IProductUsecase) ProductController {
-	return ProductController{ProductService: *productService}
+type productHandler struct {
+	pUsecase usecases.IProductUsecase
 }
 
-func (controller *ProductController) Create(c *fiber.Ctx) error {
+func NewProductHandler(pUsecase *usecases.IProductUsecase) IProductHandler {
+	return &productHandler{
+		pUsecase: *pUsecase,
+	}
+}
+
+func (co *productHandler) Create(c *fiber.Ctx) error {
 
 	var request domain.CreateProductRequest
 	if err := c.BodyParser(&request); err != nil {
@@ -29,7 +36,7 @@ func (controller *ProductController) Create(c *fiber.Ctx) error {
 		return c.JSON(presenter.Error(err.Error(), nil, exception.BadRequestError))
 	}
 
-	res, resErr := controller.ProductService.Create(request)
+	res, resErr := co.pUsecase.Create(request)
 	if resErr != nil {
 		return c.JSON(presenter.Error(resErr.Err.Error(), nil, resErr.Code))
 	}
@@ -37,8 +44,8 @@ func (controller *ProductController) Create(c *fiber.Ctx) error {
 	return c.JSON(presenter.Success("Success", res, nil))
 }
 
-func (controller *ProductController) List(c *fiber.Ctx) error {
-	responses, err := controller.ProductService.List()
+func (co *productHandler) List(c *fiber.Ctx) error {
+	responses, err := co.pUsecase.List()
 	if err != nil {
 		return c.JSON(presenter.Error(err.Err.Error(), nil, err.Code))
 	}

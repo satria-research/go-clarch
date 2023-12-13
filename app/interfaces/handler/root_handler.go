@@ -22,5 +22,5 @@ func GetTopRoute(c *fiber.Ctx) error {
 	data.Author = "Ubaidillah Hakim Fadly"
 	data.Year = "2023"
 
-	return c.JSON(presenter.Success("Success", data, 200))
+	return c.JSON(presenter.Success("Success", data, nil))
 }
