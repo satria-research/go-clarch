@@ -20,9 +20,13 @@ Changes to packages from third parties are also a challenge, such as changing th
 - [Debugger](#-debugger)
 - [Postman Docs](#-postman-docs)
 - [References](#-references)
-- [JWT Middleware Implement] ⏳
-- [Unit Testing] ⏳
-- [IAM Feature] ⏳
+- JWT Middleware Implement ⏳
+- Unit Testing ⏳
+- IAM Feature ⏳
+- Linter: golangci-lint ⏳
+- Husky for run lint+unit test when commit ⏳
+- Containerizaton with Docker ⏳
+- Docker Compose ⏳
 
 ## 🍰 The Layer
 
