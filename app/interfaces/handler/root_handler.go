@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/ubaidillahhf/go-clarch/app/infra/model"
+	"github.com/ubaidillahhf/go-clarch/app/infra/presenter"
 )
 
 type (
@@ -22,10 +22,5 @@ func GetTopRoute(c *fiber.Ctx) error {
 	data.Author = "Ubaidillah Hakim Fadly"
 	data.Year = "2023"
 
-	res := model.ApiResponse{
-		Status: "Success",
-		Data:   data,
-		Code:   200,
-	}
-	return c.JSON(res)
+	return c.JSON(presenter.Success("Success", data, 200))
 }

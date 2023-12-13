@@ -11,7 +11,7 @@ import (
 )
 
 func Init(useCase usecases.AppUseCase, conf config.IConfig) {
-	router := fiber.New(config.NewFiberConfig())
+	router := fiber.New()
 
 	// middleware
 	allowCors := cors.New(cors.Config{
