@@ -19,7 +19,7 @@ func GetTopRoute(c *fiber.Ctx) error {
 
 	data.ServiceName = "GO CLARCH"
 	data.Version = "1.0"
-	data.Author = "Ubaidillah Hakim Fadly S.Kom"
+	data.Author = "Ubaidillah Hakim Fadly"
 	data.Year = "2023"
 
 	return c.JSON(presenter.Success("Success", data, nil))
