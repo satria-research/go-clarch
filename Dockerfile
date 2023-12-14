@@ -1,29 +1,18 @@
-# BUILD
-
-FROM golang:1.19-alpine AS build-env
-
-LABEL maintainer="ubaidillah<ubed.dev@gmail.com>"
-
-RUN apk update && apk add --no-cache git
-
-WORKDIR /app
-
+# STAGE 1
+FROM golang:alpine AS builder
+ENV GO111MODULE=on
+WORKDIR /go/brantas
+COPY go.mod ./
+RUN go mod download
+RUN go clean --modcache
+RUN apk add --no-cache make
 COPY . .
+RUN go build -o main ./app/main.go
 
-RUN go mod tidy
-
-EXPOSE 8083
-
-RUN go build -o /binary
-
-# OPTIMIZE STAGE
-
+# STAGE 2
 FROM alpine:latest
-
-WORKDIR /
-
-COPY --from=build-env /binary /binary
-
-EXPOSE 8083
-
-ENTRYPOINT ["/binary"]
+WORKDIR /root/
+COPY --from=builder /go/brantas/main .
+COPY --from=builder /go/brantas/.env .
+EXPOSE 8910
+CMD ["nohup", "./main"]

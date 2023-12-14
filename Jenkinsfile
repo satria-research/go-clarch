@@ -5,9 +5,20 @@ pipeline {
     }
     stages {
         stage('Clone Repo') {
+             when {
+                anyOf {
+                    expression { return env.GIT_BRANCH == 'origin/master' }
+                }
+            }
+            environment {
+                FILE_ENV = credentials('dev-env')
+            }
             steps {
                 checkout scm
-                sh 'ls *'
+                sh '''#!/bin/bash
+                docker ps
+                cp -rf $FILE_ENV .env
+                '''
             }
         }
         stage('Build Image') {
