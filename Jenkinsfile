@@ -25,7 +25,7 @@ pipeline {
         stage('Build Image') {
             steps {
 		         sh '''#!/bin/bash
-                 docker build -t ubedev/brantas:$BUILD_NUMBER .
+                 docker build -t ubedev/brantas:12 .
                  '''
             }
         }
@@ -36,7 +36,7 @@ pipeline {
          }
         stage('Docker Push') {
             steps {  
-                sh 'docker push ubedev/brantas:$BUILD_NUMBER'
+                sh 'docker push ubedev/brantas:12'
             }
          }
         stage('Send Discord Notif') {
