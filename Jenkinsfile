@@ -16,6 +16,7 @@ pipeline {
             steps {
                 checkout scm
                 sh '''#!/bin/bash
+                addgroup jenkins docker
                 docker ps
                 cp -rf $FILE_ENV .env
                 '''
@@ -24,7 +25,7 @@ pipeline {
         stage('Build Image') {
             steps {
 		         sh '''#!/bin/bash
-                  echo $SUDO_EXAV | sudo -S docker build -t ubedev/go-clarch:$BUILD_NUMBER .
+                 docker build -t ubedev/go-clarch:$BUILD_NUMBER .
                  '''
             }
         }
