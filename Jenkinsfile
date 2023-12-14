@@ -23,7 +23,9 @@ pipeline {
         }
         stage('Build Image') {
             steps {
-		         sh 'docker build -t ubedev/go-clarch:$BUILD_NUMBER .'
+		         sh '''#!/bin/bash
+                  echo $SUDO_EXAV | sudo -S docker build -t ubedev/go-clarch:$BUILD_NUMBER .
+                 '''
             }
         }
         stage('Docker Login') {
