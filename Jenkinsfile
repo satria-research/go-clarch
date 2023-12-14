@@ -25,7 +25,7 @@ pipeline {
         stage('Build Image') {
             steps {
 		         sh '''#!/bin/bash
-                 docker build -t ubedev/go-clarch:$BUILD_NUMBER .
+                 docker build -t ubedev/brantas:$BUILD_NUMBER .
                  '''
             }
         }
