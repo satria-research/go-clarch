@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
 )
 
 type IConfig interface {
@@ -19,7 +18,8 @@ func (config *configImpl) Get(key string) string {
 }
 
 func New(filenames ...string) IConfig {
-	err := godotenv.Load(filenames...)
-	exception.PanicIfNeeded(err)
+	if err := godotenv.Load(filenames...); err != nil {
+		panic("error load env")
+	}
 	return &configImpl{}
 }

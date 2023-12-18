@@ -8,13 +8,15 @@ import (
 )
 
 func main() {
-	// Setup Configuration
+	// load config
 	configuration := config.New(".env")
-	database := config.NewMongoDatabase(configuration)
+
+	// conn mongo
+	ctx, database := config.NewMongoDatabase(configuration)
 
 	// Setup Repository
-	productRepository := repository.NewProductRepository(database)
-	userRepository := repository.NewUserRepository(database)
+	productRepository := repository.NewProductRepository(ctx, database)
+	userRepository := repository.NewUserRepository(ctx, database)
 
 	// Setup Service
 	useCase := usecases.NewAppUseCase(
