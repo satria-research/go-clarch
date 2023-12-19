@@ -9,14 +9,14 @@ import (
 
 func main() {
 	// load config
-	configuration := config.New(".env")
+	configuration := config.New("../.env")
 
 	// conn mongo
-	ctx, database := config.NewMongoDatabase(configuration)
+	database := config.NewMongoDatabase(configuration)
 
 	// Setup Repository
-	productRepository := repository.NewProductRepository(ctx, database)
-	userRepository := repository.NewUserRepository(ctx, database)
+	productRepository := repository.NewProductRepository(database)
+	userRepository := repository.NewUserRepository(database)
 
 	// Setup Service
 	useCase := usecases.NewAppUseCase(

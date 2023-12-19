@@ -11,24 +11,22 @@ import (
 )
 
 type IProductRepository interface {
-	Insert(product domain.Product) (domain.Product, *exception.Error)
-	FindAll() ([]domain.Product, *exception.Error)
-	DeleteAll() *exception.Error
+	Insert(ctx context.Context, product domain.Product) (domain.Product, *exception.Error)
+	FindAll(ctx context.Context) ([]domain.Product, *exception.Error)
+	DeleteAll(ctx context.Context) *exception.Error
 }
 
-func NewProductRepository(context context.Context, database *mongo.Database) IProductRepository {
+func NewProductRepository(database *mongo.Database) IProductRepository {
 	return &productRepository{
-		Context:    context,
 		Collection: database.Collection("products"),
 	}
 }
 
 type productRepository struct {
 	Collection *mongo.Collection
-	Context    context.Context
 }
 
-func (repo *productRepository) Insert(product domain.Product) (res domain.Product, err *exception.Error) {
+func (repo *productRepository) Insert(ctx context.Context, product domain.Product) (res domain.Product, err *exception.Error) {
 
 	oneDoc := domain.Product{
 		Id:       gonanoid.Must(),
@@ -37,7 +35,7 @@ func (repo *productRepository) Insert(product domain.Product) (res domain.Produc
 		Quantity: product.Quantity,
 	}
 
-	data, dataErr := repo.Collection.InsertOne(repo.Context, oneDoc)
+	data, dataErr := repo.Collection.InsertOne(ctx, oneDoc)
 	if dataErr != nil {
 		return res, &exception.Error{
 			Code: exception.IntenalError,
@@ -51,9 +49,9 @@ func (repo *productRepository) Insert(product domain.Product) (res domain.Produc
 	return product, nil
 }
 
-func (repo *productRepository) FindAll() (res []domain.Product, err *exception.Error) {
+func (repo *productRepository) FindAll(ctx context.Context) (res []domain.Product, err *exception.Error) {
 
-	c, cErr := repo.Collection.Find(repo.Context, bson.M{})
+	c, cErr := repo.Collection.Find(ctx, bson.M{})
 	if cErr != nil {
 		return res, &exception.Error{
 			Code: exception.IntenalError,
@@ -62,7 +60,7 @@ func (repo *productRepository) FindAll() (res []domain.Product, err *exception.E
 	}
 
 	var documents []bson.M
-	if err := c.All(repo.Context, &documents); err != nil {
+	if err := c.All(ctx, &documents); err != nil {
 		return res, &exception.Error{
 			Code: exception.IntenalError,
 			Err:  err,
@@ -81,9 +79,9 @@ func (repo *productRepository) FindAll() (res []domain.Product, err *exception.E
 	return res, nil
 }
 
-func (repo *productRepository) DeleteAll() *exception.Error {
+func (repo *productRepository) DeleteAll(ctx context.Context) *exception.Error {
 
-	if _, err := repo.Collection.DeleteMany(repo.Context, bson.M{}); err != nil {
+	if _, err := repo.Collection.DeleteMany(ctx, bson.M{}); err != nil {
 		return &exception.Error{
 			Code: exception.IntenalError,
 			Err:  err,

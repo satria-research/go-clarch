@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewMongoDatabase(configuration IConfig) (context.Context, *mongo.Database) {
+func NewMongoDatabase(configuration IConfig) *mongo.Database {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -46,5 +46,5 @@ func NewMongoDatabase(configuration IConfig) (context.Context, *mongo.Database) 
 
 	log.Println("Connected to MongoDB success")
 
-	return ctx, client.Database(configuration.Get("MONGO_DATABASE"))
+	return client.Database(configuration.Get("MONGO_DATABASE"))
 }

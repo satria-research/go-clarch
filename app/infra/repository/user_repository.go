@@ -10,22 +10,20 @@ import (
 )
 
 type IUserRepository interface {
-	Insert(newData domain.User) (domain.User, *exception.Error)
+	Insert(ctx context.Context, newData domain.User) (domain.User, *exception.Error)
 }
 
-func NewUserRepository(context context.Context, database *mongo.Database) IUserRepository {
+func NewUserRepository(database *mongo.Database) IUserRepository {
 	return &userRepository{
 		Collection: database.Collection("users"),
-		Context:    context,
 	}
 }
 
 type userRepository struct {
 	Collection *mongo.Collection
-	Context    context.Context
 }
 
-func (repo *userRepository) Insert(newData domain.User) (res domain.User, err *exception.Error) {
+func (repo *userRepository) Insert(ctx context.Context, newData domain.User) (res domain.User, err *exception.Error) {
 
 	oneDoc := domain.User{
 		Id:             gonanoid.Must(),
@@ -34,7 +32,7 @@ func (repo *userRepository) Insert(newData domain.User) (res domain.User, err *e
 		FavoritePhrase: newData.FavoritePhrase,
 	}
 
-	data, dataErr := repo.Collection.InsertOne(repo.Context, oneDoc)
+	data, dataErr := repo.Collection.InsertOne(ctx, oneDoc)
 	if dataErr != nil {
 		return res, &exception.Error{
 			Code: exception.IntenalError,
