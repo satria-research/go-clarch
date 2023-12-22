@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// load config
-	configuration := config.New("../.env")
+	configuration := config.New(".env")
 
 	// conn mongo
 	database := config.NewMongoDatabase(configuration)
