@@ -23,3 +23,12 @@ func New(filenames ...string) IConfig {
 	}
 	return &configImpl{}
 }
+
+func GetEnv(key string) string {
+	// if err := godotenv.Load(".env"); err != nil {
+	// 	panic("error load env")
+	// }
+
+	// return os.Getenv(key)
+	return os.Getenv(key)
+}
