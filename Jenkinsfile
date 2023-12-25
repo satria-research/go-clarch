@@ -36,7 +36,6 @@ pipeline {
                 sh '''#!/bin/bash
                 addgroup jenkins docker
                 docker ps
-                cp -rf $FILE_ENV .env
                 '''
             }
         }
