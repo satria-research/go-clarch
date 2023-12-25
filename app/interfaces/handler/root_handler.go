@@ -17,7 +17,7 @@ type (
 func GetTopRoute(c *fiber.Ctx) error {
 	var data Rootmessage
 
-	data.ServiceName = "GO CLARCH - PACIFIC 2"
+	data.ServiceName = "GO CLARCH - PACIFIC 3"
 	data.Version = "1.1"
 	data.Author = "Ubaidillah Hakim Fadly"
 	data.Year = "2023"
