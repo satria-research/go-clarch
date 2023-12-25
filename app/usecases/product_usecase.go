@@ -1,14 +1,16 @@
 package usecases
 
 import (
+	"context"
+
 	"github.com/ubaidillahhf/go-clarch/app/domain"
 	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
 	"github.com/ubaidillahhf/go-clarch/app/infra/repository"
 )
 
 type IProductUsecase interface {
-	Create(request domain.CreateProductRequest) (domain.Product, *exception.Error)
-	List() ([]domain.Product, *exception.Error)
+	Create(ctx context.Context, request domain.CreateProductRequest) (domain.Product, *exception.Error)
+	List(ctx context.Context) ([]domain.Product, *exception.Error)
 }
 
 func NewProductUsecase(productRepository *repository.IProductRepository) IProductUsecase {
@@ -21,7 +23,7 @@ type productUsecase struct {
 	ProductRepository repository.IProductRepository
 }
 
-func (service *productUsecase) Create(request domain.CreateProductRequest) (res domain.Product, err *exception.Error) {
+func (service *productUsecase) Create(ctx context.Context, request domain.CreateProductRequest) (res domain.Product, err *exception.Error) {
 
 	newProduct := domain.Product{
 		Name:     request.Name,
@@ -29,7 +31,7 @@ func (service *productUsecase) Create(request domain.CreateProductRequest) (res 
 		Quantity: request.Quantity,
 	}
 
-	p, pErr := service.ProductRepository.Insert(newProduct)
+	p, pErr := service.ProductRepository.Insert(ctx, newProduct)
 	if pErr != nil {
 		return res, pErr
 	}
@@ -37,8 +39,8 @@ func (service *productUsecase) Create(request domain.CreateProductRequest) (res 
 	return p, nil
 }
 
-func (service *productUsecase) List() (responses []domain.Product, err *exception.Error) {
-	products, pErr := service.ProductRepository.FindAll()
+func (service *productUsecase) List(ctx context.Context) (responses []domain.Product, err *exception.Error) {
+	products, pErr := service.ProductRepository.FindAll(ctx)
 	if pErr != nil {
 		return responses, pErr
 	}

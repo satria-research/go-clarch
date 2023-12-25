@@ -38,6 +38,7 @@ func Init(useCase usecases.AppUseCase, conf config.IConfig) {
 
 	user := v1.Group("/users")
 	user.Post("/register", userHandler.Register)
+	user.Post("/login", userHandler.Login)
 
 	product := v1.Group("/products")
 	product.Get("/", productHadler.List)

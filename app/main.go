@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
-	// Setup Configuration
+	// load config
 	configuration := config.New(".env")
+
+	// conn mongo
 	database := config.NewMongoDatabase(configuration)
 
 	// Setup Repository

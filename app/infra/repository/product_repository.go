@@ -1,18 +1,19 @@
 package repository
 
 import (
+	"context"
+
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/ubaidillahhf/go-clarch/app/domain"
-	"github.com/ubaidillahhf/go-clarch/app/infra/config"
 	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type IProductRepository interface {
-	Insert(product domain.Product) (domain.Product, *exception.Error)
-	FindAll() ([]domain.Product, *exception.Error)
-	DeleteAll() *exception.Error
+	Insert(ctx context.Context, product domain.Product) (domain.Product, *exception.Error)
+	FindAll(ctx context.Context) ([]domain.Product, *exception.Error)
+	DeleteAll(ctx context.Context) *exception.Error
 }
 
 func NewProductRepository(database *mongo.Database) IProductRepository {
@@ -25,9 +26,7 @@ type productRepository struct {
 	Collection *mongo.Collection
 }
 
-func (repository *productRepository) Insert(product domain.Product) (res domain.Product, err *exception.Error) {
-	ctx, cancel := config.NewMongoContext()
-	defer cancel()
+func (repo *productRepository) Insert(ctx context.Context, product domain.Product) (res domain.Product, err *exception.Error) {
 
 	oneDoc := domain.Product{
 		Id:       gonanoid.Must(),
@@ -36,7 +35,7 @@ func (repository *productRepository) Insert(product domain.Product) (res domain.
 		Quantity: product.Quantity,
 	}
 
-	data, dataErr := repository.Collection.InsertOne(ctx, oneDoc)
+	data, dataErr := repo.Collection.InsertOne(ctx, oneDoc)
 	if dataErr != nil {
 		return res, &exception.Error{
 			Code: exception.IntenalError,
@@ -50,11 +49,9 @@ func (repository *productRepository) Insert(product domain.Product) (res domain.
 	return product, nil
 }
 
-func (repository *productRepository) FindAll() (res []domain.Product, err *exception.Error) {
-	ctx, cancel := config.NewMongoContext()
-	defer cancel()
+func (repo *productRepository) FindAll(ctx context.Context) (res []domain.Product, err *exception.Error) {
 
-	c, cErr := repository.Collection.Find(ctx, bson.M{})
+	c, cErr := repo.Collection.Find(ctx, bson.M{})
 	if cErr != nil {
 		return res, &exception.Error{
 			Code: exception.IntenalError,
@@ -82,11 +79,9 @@ func (repository *productRepository) FindAll() (res []domain.Product, err *excep
 	return res, nil
 }
 
-func (repository *productRepository) DeleteAll() *exception.Error {
-	ctx, cancel := config.NewMongoContext()
-	defer cancel()
+func (repo *productRepository) DeleteAll(ctx context.Context) *exception.Error {
 
-	if _, err := repository.Collection.DeleteMany(ctx, bson.M{}); err != nil {
+	if _, err := repo.Collection.DeleteMany(ctx, bson.M{}); err != nil {
 		return &exception.Error{
 			Code: exception.IntenalError,
 			Err:  err,

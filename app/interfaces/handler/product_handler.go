@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/ubaidillahhf/go-clarch/app/domain"
@@ -25,6 +28,8 @@ func NewProductHandler(pUsecase *usecases.IProductUsecase) IProductHandler {
 }
 
 func (co *productHandler) Create(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	var request domain.CreateProductRequest
 	if err := c.BodyParser(&request); err != nil {
@@ -36,7 +41,7 @@ func (co *productHandler) Create(c *fiber.Ctx) error {
 		return c.JSON(presenter.Error(err.Error(), nil, exception.BadRequestError))
 	}
 
-	res, resErr := co.pUsecase.Create(request)
+	res, resErr := co.pUsecase.Create(ctx, request)
 	if resErr != nil {
 		return c.JSON(presenter.Error(resErr.Err.Error(), nil, resErr.Code))
 	}
@@ -45,7 +50,10 @@ func (co *productHandler) Create(c *fiber.Ctx) error {
 }
 
 func (co *productHandler) List(c *fiber.Ctx) error {
-	responses, err := co.pUsecase.List()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	responses, err := co.pUsecase.List(ctx)
 	if err != nil {
 		return c.JSON(presenter.Error(err.Err.Error(), nil, err.Code))
 	}

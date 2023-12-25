@@ -30,12 +30,12 @@ Changes to packages from third parties are also a challenge, such as changing th
 
 ## 🍰 The Layer
 
-| Layer                | Directory          |
-| -------------------- | ------------------ |
-| Frameworks & Drivers | /app/infra         |
-| Interface            | /app/interfaces    |
-| Usecases             | /app/usecases      |
-| Entities             | /app/domain        |
+| Layer                | Directory       |
+| -------------------- | --------------- |
+| Frameworks & Drivers | /app/infra      |
+| Interface            | /app/interfaces |
+| Usecases             | /app/usecases   |
+| Entities             | /app/domain     |
 
 ## 🧐 The Questions
 
@@ -73,3 +73,4 @@ But if u don't know before, using debugger is awesome and helpful (If u use VS C
 - https://github.com/khannedy/golang-clean-architecture
 - https://github.com/evrone/go-clean-template
 - https://github.com/Creatly/creatly-backend
+- https://github.com/DoWithLogic/golang-clean-architecture

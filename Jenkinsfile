@@ -4,7 +4,7 @@ pipeline {
         DOCKERHUB_CREDS = credentials('Dockerhub')
     }
     stages {
-        stage('Clone Repo') {
+        stage('Clone Repo Voyager') {
              when {
                 anyOf {
                     expression { return env.GIT_BRANCH == 'origin/master' }
@@ -22,10 +22,45 @@ pipeline {
                 '''
             }
         }
-        stage('Build Image') {
+         stage('Clone Repo Pacific') {
+             when {
+                anyOf {
+                    expression { return env.GIT_BRANCH == 'origin/main/pacific' }
+                }
+            }
+            environment {
+                FILE_ENV_FROM_JENKINS = credentials('dev-env-satria')
+            }
+            steps {
+                checkout scm
+                sh '''#!/bin/bash
+                addgroup jenkins docker
+                docker ps
+                cp -rf $FILE_ENV_FROM_JENKINS .env
+                '''
+            }
+        }
+        stage('Build Image Voyager') {
+            when {
+                anyOf {
+                    expression { return env.GIT_BRANCH == 'origin/master' }
+                }
+            }
             steps {
 		         sh '''#!/bin/bash
                  docker build -t ubedev/brantas:12 .
+                 '''
+            }
+        }
+         stage('Build Image Pacific') {
+            when {
+                anyOf {
+                    expression { return env.GIT_BRANCH == 'origin/main/pacific' }
+                }
+            }
+            steps {
+		         sh '''#!/bin/bash
+                 docker build -t ubedev/brantas:14 .
                  '''
             }
         }
@@ -34,17 +69,50 @@ pipeline {
                 sh 'echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin'                
             }
          }
-        stage('Docker Push') {
+        stage('Docker Push Voyager') {
+            when {
+                anyOf {
+                    expression { return env.GIT_BRANCH == 'origin/master' }
+                }
+            }
             steps {  
                 sh 'docker push ubedev/brantas:12'
             }
          }
-        stage('Send Discord Notif') {
+         stage('Docker Push Pacific') {
+            when {
+                anyOf {
+                    expression { return env.GIT_BRANCH == 'origin/main/pacific' }
+                }
+            }
+            steps {  
+                sh 'docker push ubedev/brantas:14'
+            }
+         }
+        stage('Send Discord Notif Voyager') {
+            when {
+                anyOf {
+                    expression { return env.GIT_BRANCH == 'origin/master' }
+                }
+            }
             environment {
                 DISCORD_WEBHOOK_URL = credentials('webhook_discord')
             }
             steps {
-                discordSend description: "New brantas pipeline triggered for $env.GIT_BRANCH", footer: 'Brantas Pipeline result', link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: env.DISCORD_WEBHOOK_URL
+                discordSend description: "New brantas VOYAGER pipeline triggered for $env.GIT_BRANCH", footer: 'Brantas Pipeline result', link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: env.DISCORD_WEBHOOK_URL
+            }
+        }
+        stage('Send Discord Notif Pacific') {
+            when {
+                anyOf {
+                    expression { return env.GIT_BRANCH == 'origin/main/pacific' }
+                }
+            }
+            environment {
+                DISCORD_WEBHOOK_URL = credentials('webhook_discord')
+            }
+            steps {
+                discordSend description: "New brantas PACIFIC pipeline triggered for $env.GIT_BRANCH", footer: 'Brantas Pipeline result', link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: env.DISCORD_WEBHOOK_URL
             }
         }
    }
