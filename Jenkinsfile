@@ -29,15 +29,14 @@ pipeline {
                 }
             }
             environment {
-                FILE_ENV = credentials('dev-env-pacific')
+                FILE_ENV_FROM_JENKINS = credentials('dev-env-satria')
             }
             steps {
                 checkout scm
                 sh '''#!/bin/bash
                 addgroup jenkins docker
                 docker ps
-                echo "$FILE_ENV"
-                cp -rf $FILE_ENV .env
+                cp -rf $FILE_ENV_FROM_JENKINS .env
                 '''
             }
         }
