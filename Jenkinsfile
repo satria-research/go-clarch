@@ -1,3 +1,9 @@
+def secrets = [
+  [path: 'kv/brantas/main', engineVersion: 2, secretValues: [
+    [envVar: 'coba', vaultKey: 'PORT'],
+    ]],
+]
+def configuration = [vaultUrl: 'https://vault.ubed.dev',  vaultCredentialId: 'vaultapprole', engineVersion: 2]
 pipeline {
     agent any
     environment{
@@ -38,6 +44,7 @@ pipeline {
         stage('Download ENV') {
             steps {
                 withVault([configuration: configuration, vaultSecrets: secrets]) {
+                    sh "echo ${env.coba}"
                     sh '''
                     docker exec vault sh -c 'export VAULT_ADDR=http://127.0.0.1:8200;rm -rf env.json;vault kv get -format=json kv/brantas/main > env.json;exit'
                     rm -rf .env
