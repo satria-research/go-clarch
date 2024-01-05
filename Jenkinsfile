@@ -27,7 +27,7 @@ pipeline {
                 script {
                     scannerHome = tool 'jenkinsSonarScanner'
                 }
-                withSonarQubeEnv('sonar') {
+                withSonarQubeEnv('brantasdua') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
