@@ -6,7 +6,7 @@ COPY go.mod ./
 RUN go mod download
 RUN go clean --modcache
 RUN apk add --no-cache make
-COPY ./app /app
+COPY ./app ./app
 RUN go build -o main ./app/main.go
 
 # STAGE 2
