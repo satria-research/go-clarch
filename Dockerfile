@@ -11,8 +11,8 @@ RUN go build -o main ./app/main.go
 
 # STAGE 2
 FROM alpine:3.19.0
-RUN useradd -u 8877 exav
-USER exav
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 WORKDIR /root/
 COPY --from=builder /go/brantas/main .
 COPY --from=builder /go/brantas/.env .
