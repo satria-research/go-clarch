@@ -22,10 +22,14 @@ pipeline {
                 '''
             }
         }
-        stage('SonarQube Analysis') {
-            def scannerHome = tool 'brantasdua';
-            withSonarQubeEnv() {
-                sh "${scannerHome}/bin/sonar-scanner"
+        stage('SonarQube analysis') {
+            steps {
+                script {
+                scannerHome = tool 'brantasdua'
+                }
+                withSonarQubeEnv('SonarQube Scanner') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
             }
         }
         stage('Build Image') {
