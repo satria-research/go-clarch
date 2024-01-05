@@ -25,7 +25,7 @@ pipeline {
         stage('SonarQube analysis') {
             steps {
                 script {
-                scannerHome = tool 'brantasdua'
+                scannerHome = tool 'jenkinsSonarScanner'
                 }
                 withSonarQubeEnv('SonarQube Scanner') {
                     sh "${scannerHome}/bin/sonar-scanner"
