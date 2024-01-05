@@ -6,11 +6,12 @@ COPY go.mod ./
 RUN go mod download
 RUN go clean --modcache
 RUN apk add --no-cache make
-COPY ./app ./app
+COPY . .
 RUN go build -o main ./app/main.go
 
 # STAGE 2
 FROM alpine:3.19.0
+# This is for add appuser in apine linux
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 WORKDIR /root/
