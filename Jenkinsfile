@@ -22,13 +22,20 @@ pipeline {
                 '''
             }
         }
-        stage('SonarQube analysis') {
+        stage('Sonarqube Analysis') {
             steps {
                 script {
                     scannerHome = tool 'jenkinsSonarScanner'
                 }
                 withSonarQubeEnv('brantasdua') {
                     sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
