@@ -1,0 +1,6 @@
+projectKey=brantas
+serverUrl=https://sonar.ubed.dev
+serverVersion=10.3.0.82913
+dashboardUrl=https://sonar.ubed.dev/dashboard?id=brantas
+ceTaskId=AYzYiLGKpjdA77KfQHMw
+ceTaskUrl=https://sonar.ubed.dev/api/ce/task?id=AYzYiLGKpjdA77KfQHMw
