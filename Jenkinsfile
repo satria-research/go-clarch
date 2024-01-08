@@ -1,3 +1,7 @@
+def secrets = [
+  [path: 'kv/brantas/main', engineVersion: 2, secretValues: []],
+]
+def configuration = [vaultUrl: 'https://vault.ubed.dev',  vaultCredentialId: 'vaultapprole', engineVersion: 2]
 pipeline {
     agent any
     environment{
@@ -10,15 +14,11 @@ pipeline {
                     expression { return env.GIT_BRANCH == 'origin/master' }
                 }
             }
-            environment {
-                FILE_ENV_FROM_JENKINS = credentials('dev-env-satria')
-            }
             steps {
                 checkout scm
                 sh '''#!/bin/bash
                 addgroup jenkins docker
                 docker ps
-                cp -rf $FILE_ENV_FROM_JENKINS .env
                 '''
             }
         }
@@ -38,6 +38,18 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
+        }
+        stage('Download ENV') {
+            steps {
+                withVault([configuration: configuration, vaultSecrets: secrets]) {
+                    sh '''
+                    docker exec vault sh -c 'export VAULT_ADDR=http://127.0.0.1:8200;rm -rf env.json;vault kv get -format=json kv/brantas/main > env.json;exit'
+                    rm -rf .env
+                    docker cp vault:env.json env.json
+                    cat env.json | jq -r '.data.data | to_entries[] | join("=")' > .env
+                    '''
+                }
+            }  
         }
         stage('Build Image') {
             when {
