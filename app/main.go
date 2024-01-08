@@ -11,6 +11,9 @@ func main() {
 	// load config
 	configuration := config.New(".env")
 
+	// error monitoring
+	config.GlitchtipInit(configuration)
+
 	// conn mongo
 	database := config.NewMongoDatabase(configuration)
 

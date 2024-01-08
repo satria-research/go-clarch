@@ -20,6 +20,9 @@ Changes to packages from third parties are also a challenge, such as changing th
 - [Debugger](#-debugger)
 - [Postman Docs](#-postman-docs)
 - [References](#-references)
+- [Error Monitoring](#-error-monitoring)
+- [Code Quality Sonarqube](#-sonarqube)
+- [Secret Management With Vault](#-vault)
 - JWT Middleware Implement ⏳
 - Unit Testing ⏳
 - IAM Feature ⏳
@@ -67,6 +70,24 @@ Visit: https://github.com/cosmtrek/air for installation guide
 If you come from PHP maybe you use var_dump(), if u from javasript maybe u use console.log(), in GO u can use fmt.Println() or u can use logging with log.Println().
 
 But if u don't know before, using debugger is awesome and helpful (If u use VS Code), u just go to debug and run the debugger. The config in .vscode in the project. Wanna try? Learn [here](https://medium.com/@slamflipstrom/debugging-with-visual-studio-code-857904a8a590)
+
+## 🐞 Error Monitoring
+
+preq: need account in sentry or glitchtip
+
+Get error early with error monitoring (before client report) with sentry or glitchtip (using same SDK but simplier). Create account and get DSN API and place to env.
+
+## ✅ Sonarqube
+
+preq: sonarqube server (use selfhost or saas with sonarcloud is up to you)
+
+Get confident with code quality in production, placing in jenkins pipeline (see Jenkinsfile). Get quality gate status, when something is bad the pipeline will be aborted.
+
+## 🔐 Vault
+
+preq: you must set vault server (use selfhost or saas is up to you), install extension in jenkins, install jq in your server.
+
+You may face the challenging of management env, the versioning, env mode, and security. Yeah, vault is the solution for this. See in jenkinsfile, vault is in pipeline will replacing your env with new from vault. The env in repo will be unused and ignore.
 
 ## 📚 References
 

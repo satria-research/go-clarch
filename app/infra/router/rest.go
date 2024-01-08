@@ -1,6 +1,9 @@
 package router
 
 import (
+	"fmt"
+
+	"github.com/gofiber/contrib/fibersentry"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -25,6 +28,9 @@ func Init(useCase usecases.AppUseCase, conf config.IConfig) {
 		Format: "${pid} ${locals:requestid} ${status} - ${method} ${path}\n",
 	})
 	router.Use(allowCors, logging, recover.New())
+	router.Use(fibersentry.New(fibersentry.Config{
+		Repanic: true,
+	}))
 
 	// hadler
 	productHadler := handler.NewProductHandler(&useCase.ProductUsecase)
@@ -43,6 +49,19 @@ func Init(useCase usecases.AppUseCase, conf config.IConfig) {
 	product := v1.Group("/products")
 	product.Get("/", productHadler.List)
 	product.Post("/", productHadler.Create)
+
+	router.Get("/error", func(c *fiber.Ctx) error {
+
+		type some struct {
+			coba *int
+		}
+
+		newSome := new(some)
+
+		fmt.Println(*newSome.coba)
+
+		return c.JSON("ok")
+	})
 
 	router.Listen(":" + conf.Get("PORT"))
 }
