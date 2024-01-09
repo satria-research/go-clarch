@@ -17,10 +17,10 @@ type (
 func GetTopRoute(c *fiber.Ctx) error {
 	var data Rootmessage
 
-	data.ServiceName = "GO CLARCH - SATRIA"
+	data.ServiceName = "GO CLARCH - SATRIA X ROCKY"
 	data.Version = "1.1"
 	data.Author = "Ubaidillah Hakim Fadly"
-	data.Year = "2023"
+	data.Year = "2024"
 
 	return c.JSON(presenter.Success("Success", data, nil))
 }
