@@ -120,6 +120,8 @@ preq: install swagger cli go install github.com/swaggo/swag/cmd/swag@latest
 swagger init
 ```
 
+open in browser: localhost:8000/swagger/index.html
+
 ## 📚 References
 
 - https://github.com/khannedy/golang-clean-architecture
