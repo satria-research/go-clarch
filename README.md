@@ -94,23 +94,31 @@ You may face the challenging of management env, the versioning, env mode, and se
 
 Build image with docker build:
 
-1. docker build --tag clarch:v0.0.1 .
+```sh
+docker build --tag clarch:v0.0.1 .
+```
 
 Create container from image we create recently, with daemon mode (-d)
 
-2. docker run -d -p 8000:8000 --name clarch clarch:v0.0.1
+```sh
+docker run -d -p 8000:8000 --name clarch clarch:v0.0.1
+```
 
 ## 🐋 Docker Compose
 
 Run image with dependecy instantly with docker-compose, for this example i use push image first to container registry and place to docker-compose file. Replace with your own
 
-1. docker-compose up -d
+```sh
+docker-compose up -d
+```
 
 ## 📖 Swagger
 
 preq: install swagger cli go install github.com/swaggo/swag/cmd/swag@latest
 
-1. swagger init
+```sh
+swagger init
+```
 
 ## 📚 References
 
