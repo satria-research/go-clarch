@@ -23,13 +23,14 @@ Changes to packages from third parties are also a challenge, such as changing th
 - [Error Monitoring](#-error-monitoring)
 - [Code Quality Sonarqube](#-sonarqube)
 - [Secret Management With Vault](#-vault)
+- [Containerizaton with Docker](#-docker) 
+- [Docker Compose](#-docker-composer)
+- [Swagger API Docs](#-swagger)
 - JWT Middleware Implement ⏳
 - Unit Testing ⏳
 - IAM Feature ⏳
 - Linter: golangci-lint ⏳
-- Husky for run lint+unit test when commit ⏳
-- Containerizaton with Docker ⏳
-- Docker Compose ⏳
+- Husky for run lint+unit test when commit ⏳ 
 
 ## 🍰 The Layer
 
@@ -88,6 +89,28 @@ Get confident with code quality in production, placing in jenkins pipeline (see 
 preq: you must set vault server (use selfhost or saas is up to you), install extension in jenkins, install jq in your server.
 
 You may face the challenging of management env, the versioning, env mode, and security. Yeah, vault is the solution for this. See in jenkinsfile, vault is in pipeline will replacing your env with new from vault. The env in repo will be unused and ignore.
+
+## 🐳 Docker
+
+Build image with docker build:
+
+1. docker build --tag clarch:v0.0.1 .
+
+Create container from image we create recently, with daemon mode (-d)
+
+2. docker run -d -p 8000:8000 --name clarch clarch:v0.0.1
+
+## 🐋 Docker Compose
+
+Run image with dependecy instantly with docker-compose, for this example i use push image first to container registry and place to docker-compose file. Replace with your own
+
+1. docker-compose up -d
+
+## 📖 Swagger
+
+preq: install swagger cli go install github.com/swaggo/swag/cmd/swag@latest
+
+1. swagger init
 
 ## 📚 References
 

@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 	"github.com/ubaidillahhf/go-clarch/app/infra/config"
 	"github.com/ubaidillahhf/go-clarch/app/interfaces/handler"
 	"github.com/ubaidillahhf/go-clarch/app/usecases"
@@ -15,6 +16,8 @@ import (
 
 func Init(useCase usecases.AppUseCase, conf config.IConfig) {
 	router := fiber.New()
+
+	router.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	// middleware
 	allowCors := cors.New(cors.Config{

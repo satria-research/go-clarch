@@ -28,6 +28,15 @@ func NewUserHandler(userUsecase *usecases.IUserUsecase) IUserHandler {
 	}
 }
 
+//		@Summary        Create new user
+//		@Description    Create new user
+//		@Tags           Users
+//		@Accept         json
+//		@Produce        json
+//	 @Param data body domain.User true "body payload"
+//		@Security       JWT
+//		@Success        200 {object} presenter.SuccessResponse{data=domain.User}
+//		@Router         /users [post]
 func (co *userHandler) Register(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

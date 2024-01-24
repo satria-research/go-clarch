@@ -2,6 +2,13 @@ package presenter
 
 import "github.com/gofiber/fiber/v2"
 
+type SuccessResponse struct {
+	Data    interface{} `json:"data"`
+	Message string      `json:"message"`
+	Status  int         `json:"status"`
+	Code    int         `json:"code"`
+}
+
 func Success(message string, data interface{}, meta interface{}) fiber.Map {
 	if meta != nil {
 		return fiber.Map{

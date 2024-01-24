@@ -27,6 +27,15 @@ func NewProductHandler(pUsecase *usecases.IProductUsecase) IProductHandler {
 	}
 }
 
+//		@Summary        Create new product
+//		@Description    Create new product
+//		@Tags           Products
+//		@Accept         json
+//		@Produce        json
+//	 @Param data body domain.Product true "body payload"
+//		@Security       JWT
+//		@Success        200 {object} presenter.SuccessResponse{data=domain.Product}
+//		@Router         /products [post]
 func (co *productHandler) Create(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
