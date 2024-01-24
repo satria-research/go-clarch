@@ -7,7 +7,7 @@ RUN go mod download
 RUN go clean --modcache
 RUN apk add --no-cache make
 COPY . .
-RUN go build -o main ./app/main.go
+RUN go build -o main ./main.go
 
 # STAGE 2
 FROM alpine:3.19.0
