@@ -18,7 +18,6 @@ Changes to packages from third parties are also a challenge, such as changing th
 - [Fiber Go web framework](#-fiber-go)
 - [Air live reloading](#-air)
 - [Debugger](#-debugger)
-- [Postman Docs](#-postman-docs)
 - [References](#-references)
 - [Error Monitoring](#-error-monitoring)
 - [Code Quality Sonarqube](#-sonarqube)
@@ -26,6 +25,7 @@ Changes to packages from third parties are also a challenge, such as changing th
 - [Containerizaton with Docker](#-docker) 
 - [Docker Compose](#-docker-composer)
 - [Swagger API Docs](#-swagger)
+- [Logger](#-logger)
 - JWT Middleware Implement ⏳
 - Unit Testing ⏳
 - IAM Feature ⏳
@@ -121,6 +121,12 @@ swagger init
 ```
 
 open in browser: localhost:8000/swagger/index.html
+
+## 📖 Logger
+
+using fast advance log with zerolog, not sure why using pkg logging? read [here](https://medium.com/codex/level-based-logging-in-go-with-uber-zap-a8a90aa40672)
+
+we using zerolong, you can read to the official docs at [here](https://github.com/rs/zerolog)
 
 ## 📚 References
 
