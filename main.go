@@ -4,7 +4,6 @@ import (
 	"github.com/ubaidillahhf/go-clarch/app/infra/config"
 	"github.com/ubaidillahhf/go-clarch/app/infra/repository"
 	"github.com/ubaidillahhf/go-clarch/app/infra/router"
-	logx "github.com/ubaidillahhf/go-clarch/app/infra/utility/logger"
 	"github.com/ubaidillahhf/go-clarch/app/usecases"
 	_ "github.com/ubaidillahhf/go-clarch/docs"
 )
@@ -34,8 +33,6 @@ func main() {
 
 	// conn mongo
 	database := config.NewMongoDatabase(configuration)
-
-	logx.Create().Info().Msg("This is log testing")
 
 	// Setup Repository
 	productRepository := repository.NewProductRepository(database)

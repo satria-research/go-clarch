@@ -2,12 +2,14 @@ package config
 
 import (
 	"context"
-	"log"
 	"strconv"
 	"time"
 
+	"github.com/ubaidillahhf/go-clarch/app/infra/utility/constants"
+	logx "github.com/ubaidillahhf/go-clarch/app/infra/utility/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func NewMongoDatabase(configuration IConfig) *mongo.Database {
@@ -44,7 +46,12 @@ func NewMongoDatabase(configuration IConfig) *mongo.Database {
 		panic("Failed to connect to database!")
 	}
 
-	log.Println("Connected to MongoDB success")
+	if err := client.Ping(ctx, readpref.Nearest()); err != nil {
+		logx.Create().Error().Msg("Connect Mongo DB Failed")
+		panic(constants.FAILED_CONNECT_DB)
+	}
+
+	logx.Create().Info().Msg("Connected to MongoDB success")
 
 	return client.Database(configuration.Get("MONGO_DATABASE"))
 }
