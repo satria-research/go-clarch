@@ -30,7 +30,7 @@ func main() {
 	configuration := config.New(".env")
 
 	// error monitoring
-	config.GlitchtipInit(configuration)
+	config.SentryInit(configuration)
 
 	// conn mongo
 	database := config.NewMongoDatabase(configuration)

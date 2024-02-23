@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/jinzhu/copier"
 	"github.com/ubaidillahhf/go-clarch/app/domain"
 	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
 	"github.com/ubaidillahhf/go-clarch/app/infra/presenter"
@@ -63,10 +64,8 @@ func (co *userHandler) Register(c *fiber.Ctx) error {
 		return c.JSON(presenter.Error(resErr.Err.Error(), nil, resErr.Code))
 	}
 
-	newRes := domain.RegisterResponse{
-		Id:    res.Id,
-		Email: res.Email,
-	}
+	newRes := domain.RegisterResponse{}
+	copier.Copy(&newRes, &res)
 	return c.JSON(presenter.Success("Success", newRes, nil))
 }
 
@@ -93,9 +92,5 @@ func (co *userHandler) Login(c *fiber.Ctx) error {
 		return c.JSON(presenter.Error(resErr.Err.Error(), nil, resErr.Code))
 	}
 
-	newRes := domain.LoginResponse{
-		Email: res.Email,
-		Token: res.Token,
-	}
-	return c.JSON(presenter.Success("Success", newRes, nil))
+	return c.JSON(presenter.Success("Success", res, nil))
 }

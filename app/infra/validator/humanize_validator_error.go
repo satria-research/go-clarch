@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/ubaidillahhf/go-clarch/app/infra/utility/helper"
 )
 
 type Lv1Error struct {
@@ -30,9 +31,27 @@ func GenerateHumanizeError(payload any, err error) []Lv1Error {
 
 		for _, fe := range ve {
 
+			var reflectValue = reflect.TypeOf(payload)
+
+			/**
+			* handling source data payload with type interface/any.
+			* if payload type using pointer use Elem() instead, no pointer will be error panic when
+			* using Elem().
+			* note: pointer using new, not pointer using var
+			* Why about unuse Elem() for all? for pointer will throw error: reflect: FieldByName of non-struct type *domain
+			 */
+			if reflectValue.Kind() == reflect.Ptr {
+				reflectValue = reflectValue.Elem()
+			}
+
 			fieldName := fe.Field()
-			field, _ := reflect.TypeOf(payload).Elem().FieldByName(fieldName)
-			fieldJSONName, _ := field.Tag.Lookup("json")
+			fieldNameNs := fe.Namespace()
+
+			field, _ := reflectValue.FieldByName(fieldName)
+			fieldJSONName, ok := field.Tag.Lookup("json")
+			if !ok {
+				fieldJSONName = helper.ConvLastStructNameToCamelCase(fieldNameNs)
+			}
 
 			out = append(out, Lv1Error{
 				Param:   fieldJSONName,
