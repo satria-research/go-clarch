@@ -6,26 +6,27 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/jinzhu/copier"
-	"github.com/ubaidillahhf/go-clarch/app/domain"
 	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
 	"github.com/ubaidillahhf/go-clarch/app/infra/presenter"
 	xvalidator "github.com/ubaidillahhf/go-clarch/app/infra/validator"
+	"github.com/ubaidillahhf/go-clarch/app/interfaces/dto"
 	"github.com/ubaidillahhf/go-clarch/app/usecases"
 )
 
-type IUserHandler interface {
+type UserHandler interface {
 	Register(c *fiber.Ctx) error
 	Login(c *fiber.Ctx) error
 }
 
 type userHandler struct {
-	userUsecase usecases.IUserUsecase
+	usecase   usecases.UserUsecase
+	validator *validator.Validate
 }
 
-func NewUserHandler(userUsecase *usecases.IUserUsecase) IUserHandler {
+func NewUserHandler(usecase usecases.UserUsecase, validator *validator.Validate) UserHandler {
 	return &userHandler{
-		userUsecase: *userUsecase,
+		usecase:   usecase,
+		validator: validator,
 	}
 }
 
@@ -34,63 +35,66 @@ func NewUserHandler(userUsecase *usecases.IUserUsecase) IUserHandler {
 //		@Tags           Users
 //		@Accept         json
 //		@Produce        json
-//	 @Param data body domain.User true "body payload"
+//	 @Param data body dto.RegisterRequest true "body payload"
 //		@Security       JWT
-//		@Success        200 {object} presenter.SuccessResponse{data=domain.User}
-//		@Router         /users [post]
-func (co *userHandler) Register(c *fiber.Ctx) error {
+//		@Success        200 {object} presenter.SuccessResponse{data=dto.RegisterResponse}
+//		@Router         /users/register [post]
+func (h *userHandler) Register(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	request := new(domain.RegisterRequest)
+	request := new(dto.RegisterRequest)
 	if err := c.BodyParser(&request); err != nil {
 		return c.JSON(presenter.Error(err.Error(), nil, exception.BadRequestError))
 	}
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(request); err != nil {
+	if err := h.validator.Struct(request); err != nil {
 		return c.JSON(presenter.Error("error", xvalidator.GenerateHumanizeError(request, err), exception.BadRequestError))
 	}
 
-	newData := domain.User{
-		Fullname:       request.Fullname,
-		Username:       request.Username,
-		Email:          request.Email,
-		Password:       request.Password,
-		FavoritePhrase: request.FavoritePhrase,
-	}
-	res, resErr := co.userUsecase.Register(ctx, newData)
-	if resErr != nil {
-		return c.JSON(presenter.Error(resErr.Err.Error(), nil, resErr.Code))
+	user, err := h.usecase.Register(ctx, request.Username, request.Fullname, request.Email, request.Password, request.FavoritePhrase)
+	if err != nil {
+		return c.JSON(presenter.Error(err.Error(), nil, exception.BadRequestError))
 	}
 
-	newRes := domain.RegisterResponse{}
-	copier.Copy(&newRes, &res)
-	return c.JSON(presenter.Success("Success", newRes, nil))
+	response := dto.RegisterResponse{
+		Id:    user.Id,
+		Email: user.Email,
+	}
+
+	return c.JSON(presenter.Success("Success", response, nil))
 }
 
-func (co *userHandler) Login(c *fiber.Ctx) error {
+//		@Summary        Login user
+//		@Description    Login user
+//		@Tags           Users
+//		@Accept         json
+//		@Produce        json
+//	 @Param data body dto.LoginRequest true "body payload"
+//		@Success        200 {object} presenter.SuccessResponse{data=dto.LoginResponse}
+//		@Router         /users/login [post]
+func (h *userHandler) Login(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	request := new(domain.LoginRequest)
+	request := new(dto.LoginRequest)
 	if err := c.BodyParser(&request); err != nil {
 		return c.JSON(presenter.Error(err.Error(), nil, exception.BadRequestError))
 	}
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(request); err != nil {
+	if err := h.validator.Struct(request); err != nil {
 		return c.JSON(presenter.Error("error", xvalidator.GenerateHumanizeError(request, err), exception.BadRequestError))
 	}
 
-	newData := domain.LoginRequest{
-		Email:    request.Email,
-		Password: request.Password,
-	}
-	res, resErr := co.userUsecase.Login(ctx, newData)
-	if resErr != nil {
-		return c.JSON(presenter.Error(resErr.Err.Error(), nil, resErr.Code))
+	token, err := h.usecase.Login(ctx, request.Email, request.Password)
+	if err != nil {
+		return c.JSON(presenter.Error(err.Error(), nil, exception.BadRequestError))
 	}
 
-	return c.JSON(presenter.Success("Success", res, nil))
+	response := dto.LoginResponse{
+		Email: request.Email,
+		Token: token,
+	}
+
+	return c.JSON(presenter.Success("Success", response, nil))
 }

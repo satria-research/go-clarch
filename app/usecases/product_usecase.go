@@ -4,54 +4,33 @@ import (
 	"context"
 
 	"github.com/ubaidillahhf/go-clarch/app/domain"
-	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
-	"github.com/ubaidillahhf/go-clarch/app/infra/repository"
 )
 
-type IProductUsecase interface {
-	Create(ctx context.Context, request domain.CreateProductRequest) (domain.Product, *exception.Error)
-	List(ctx context.Context) ([]domain.Product, *exception.Error)
+type ProductUsecase interface {
+	Create(ctx context.Context, name string, price int64, quantity int32) (domain.Product, error)
+	List(ctx context.Context) ([]domain.Product, error)
 }
 
-func NewProductUsecase(productRepository *repository.IProductRepository) IProductUsecase {
+func NewProductUsecase(productRepository domain.ProductRepository) ProductUsecase {
 	return &productUsecase{
-		ProductRepository: *productRepository,
+		productRepo: productRepository,
 	}
 }
 
 type productUsecase struct {
-	ProductRepository repository.IProductRepository
+	productRepo domain.ProductRepository
 }
 
-func (service *productUsecase) Create(ctx context.Context, request domain.CreateProductRequest) (res domain.Product, err *exception.Error) {
-
+func (uc *productUsecase) Create(ctx context.Context, name string, price int64, quantity int32) (domain.Product, error) {
 	newProduct := domain.Product{
-		Name:     request.Name,
-		Price:    request.Price,
-		Quantity: request.Quantity,
+		Name:     name,
+		Price:    price,
+		Quantity: quantity,
 	}
 
-	p, pErr := service.ProductRepository.Insert(ctx, newProduct)
-	if pErr != nil {
-		return res, pErr
-	}
-
-	return p, nil
+	return uc.productRepo.Insert(ctx, newProduct)
 }
 
-func (service *productUsecase) List(ctx context.Context) (responses []domain.Product, err *exception.Error) {
-	products, pErr := service.ProductRepository.FindAll(ctx)
-	if pErr != nil {
-		return responses, pErr
-	}
-
-	for _, product := range products {
-		responses = append(responses, domain.Product{
-			Id:       product.Id,
-			Name:     product.Name,
-			Price:    product.Price,
-			Quantity: product.Quantity,
-		})
-	}
-	return responses, nil
+func (uc *productUsecase) List(ctx context.Context) ([]domain.Product, error) {
+	return uc.productRepo.FindAll(ctx)
 }

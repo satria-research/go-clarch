@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/contrib/fibersentry"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -35,9 +36,12 @@ func Init(useCase usecases.AppUseCase, conf config.IConfig) {
 		Repanic: true,
 	}))
 
-	// hadler
-	productHadler := handler.NewProductHandler(&useCase.ProductUsecase)
-	userHandler := handler.NewUserHandler(&useCase.UserUsecase)
+	// validator
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
+	// handlers
+	productHandler := handler.NewProductHandler(useCase.ProductUsecase, validate)
+	userHandler := handler.NewUserHandler(useCase.UserUsecase, validate)
 
 	// service route
 	router.Get("/", handler.GetTopRoute)
@@ -50,8 +54,8 @@ func Init(useCase usecases.AppUseCase, conf config.IConfig) {
 	user.Post("/login", userHandler.Login)
 
 	product := v1.Group("/products")
-	product.Get("/", productHadler.List)
-	product.Post("/", productHadler.Create)
+	product.Get("/", productHandler.List)
+	product.Post("/", productHandler.Create)
 
 	router.Get("/error", func(c *fiber.Ctx) error {
 

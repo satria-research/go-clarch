@@ -6,79 +6,87 @@ import (
 	"strconv"
 
 	"github.com/ubaidillahhf/go-clarch/app/domain"
-	"github.com/ubaidillahhf/go-clarch/app/infra/config"
-	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
-	"github.com/ubaidillahhf/go-clarch/app/infra/repository"
-	"github.com/ubaidillahhf/go-clarch/app/infra/utility/helper"
-	"github.com/ubaidillahhf/go-clarch/app/interfaces/middleware"
-	"golang.org/x/crypto/bcrypt"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type IUserUsecase interface {
-	Register(ctx context.Context, request domain.User) (domain.User, *exception.Error)
-	Login(ctx context.Context, request domain.LoginRequest) (domain.LoginResponse, *exception.Error)
+type UserUsecase interface {
+	Register(ctx context.Context, username, fullname, email, password, favoritePhrase string) (domain.User, error)
+	Login(ctx context.Context, email, password string) (string, error)
 }
 
-func NewUserUsecase(repo *repository.IUserRepository) IUserUsecase {
+func NewUserUsecase(
+	repo domain.UserRepository,
+	passwordHasher domain.PasswordHasher,
+	usernameGenerator domain.UsernameGenerator,
+	tokenGenerator domain.TokenGenerator,
+	config domain.ConfigProvider,
+) UserUsecase {
 	return &userUsecase{
-		repo: *repo,
+		repo:              repo,
+		passwordHasher:    passwordHasher,
+		usernameGenerator: usernameGenerator,
+		tokenGenerator:    tokenGenerator,
+		config:            config,
 	}
 }
 
 type userUsecase struct {
-	repo repository.IUserRepository
+	repo              domain.UserRepository
+	passwordHasher    domain.PasswordHasher
+	usernameGenerator domain.UsernameGenerator
+	tokenGenerator    domain.TokenGenerator
+	config            domain.ConfigProvider
 }
 
-func (uc *userUsecase) Register(ctx context.Context, request domain.User) (res domain.User, err *exception.Error) {
+func (uc *userUsecase) Register(ctx context.Context, username, fullname, email, password, favoritePhrase string) (domain.User, error) {
+	existingUser, err := uc.repo.FindByIdentifier(ctx, username, email)
+	if err != nil && err != mongo.ErrNoDocuments {
+		return domain.User{}, err
+	}
+	if existingUser.Id != "" {
+		return domain.User{}, errors.New("username or email already registered")
+	}
 
-	data, _ := uc.repo.FindByIdentifier(ctx, request.Username, request.Email)
-	if data != (domain.User{}) {
-		return res, &exception.Error{
-			Code: 400,
-			Err:  errors.New("username or email already registered"),
+	if username == "" {
+		username = uc.usernameGenerator.Generate(fullname)
+	}
+
+	hashedPassword, err := uc.passwordHasher.Hash(password)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	newUser := domain.User{
+		Username:       username,
+		Fullname:       fullname,
+		Email:          email,
+		Password:       hashedPassword,
+		FavoritePhrase: favoritePhrase,
+	}
+
+	return uc.repo.Insert(ctx, newUser)
+}
+
+func (uc *userUsecase) Login(ctx context.Context, email, password string) (string, error) {
+	user, err := uc.repo.FindByIdentifier(ctx, "", email)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return "", errors.New("user not found")
 		}
+		return "", err
 	}
 
-	if request.Username == "" {
-		request.Username = helper.RandomUsername(request.Fullname)
+	if err := uc.passwordHasher.Compare(user.Password, password); err != nil {
+		return "", errors.New("wrong password")
 	}
 
-	hashPwd, _ := helper.HashPassword(request.Password)
-	newData := domain.User{
-		Email:          request.Email,
-		FavoritePhrase: request.FavoritePhrase,
-		Password:       hashPwd,
-	}
-
-	p, pErr := uc.repo.Insert(ctx, newData)
-	if pErr != nil {
-		return res, pErr
-	}
-
-	return p, nil
-}
-
-func (uc *userUsecase) Login(ctx context.Context, req domain.LoginRequest) (res domain.LoginResponse, err *exception.Error) {
-
-	secret := config.GetEnv("ACCESS_TOKEN_SECRET")
-	exp := config.GetEnv("ACCESS_TOKEN_EXPIRY_HOUR")
+	exp := uc.config.Get("ACCESS_TOKEN_EXPIRY_HOUR")
 	expAsInt, _ := strconv.Atoi(exp)
 
-	data, _ := uc.repo.FindByIdentifier(ctx, "", req.Email)
-	match := bcrypt.CompareHashAndPassword([]byte(data.Password), []byte(req.Password))
-	if match != nil {
-		return res, &exception.Error{
-			Code: 400,
-			Err:  errors.New("wrong password"),
-		}
+	token, err := uc.tokenGenerator.GenerateAccessToken(&user, expAsInt)
+	if err != nil {
+		return "", err
 	}
 
-	newToken, _ := middleware.CreateAccessToken(&data, secret, int(expAsInt))
-
-	res = domain.LoginResponse{
-		Email: data.Email,
-		Token: newToken,
-	}
-
-	return res, nil
+	return token, nil
 }

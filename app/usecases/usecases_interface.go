@@ -1,18 +1,22 @@
 package usecases
 
-import "github.com/ubaidillahhf/go-clarch/app/infra/repository"
+import "github.com/ubaidillahhf/go-clarch/app/domain"
 
 type AppUseCase struct {
-	ProductUsecase IProductUsecase
-	UserUsecase    IUserUsecase
+	ProductUsecase ProductUsecase
+	UserUsecase    UserUsecase
 }
 
 func NewAppUseCase(
-	ProductRepo repository.IProductRepository,
-	UserRepo repository.IUserRepository,
+	productRepo domain.ProductRepository,
+	userRepo domain.UserRepository,
+	passwordHasher domain.PasswordHasher,
+	usernameGenerator domain.UsernameGenerator,
+	tokenGenerator domain.TokenGenerator,
+	config domain.ConfigProvider,
 ) AppUseCase {
 	return AppUseCase{
-		ProductUsecase: NewProductUsecase(&ProductRepo),
-		UserUsecase:    NewUserUsecase(&UserRepo),
+		ProductUsecase: NewProductUsecase(productRepo),
+		UserUsecase:    NewUserUsecase(userRepo, passwordHasher, usernameGenerator, tokenGenerator, config),
 	}
 }

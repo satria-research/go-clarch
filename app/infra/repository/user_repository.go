@@ -5,17 +5,11 @@ import (
 
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/ubaidillahhf/go-clarch/app/domain"
-	"github.com/ubaidillahhf/go-clarch/app/infra/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type IUserRepository interface {
-	Insert(ctx context.Context, newData domain.User) (domain.User, *exception.Error)
-	FindByIdentifier(ctx context.Context, username, email string) (domain.User, *exception.Error)
-}
-
-func NewUserRepository(database *mongo.Database) IUserRepository {
+func NewUserRepository(database *mongo.Database) domain.UserRepository {
 	return &userRepository{
 		Collection: database.Collection("users"),
 	}
@@ -25,33 +19,37 @@ type userRepository struct {
 	Collection *mongo.Collection
 }
 
-func (repo *userRepository) Insert(ctx context.Context, newData domain.User) (res domain.User, err *exception.Error) {
-
+func (repo *userRepository) Insert(ctx context.Context, newData domain.User) (domain.User, error) {
 	oneDoc := domain.User{
 		Id:             gonanoid.Must(),
+		Username:       newData.Username,
+		Fullname:       newData.Fullname,
 		Email:          newData.Email,
 		Password:       newData.Password,
 		FavoritePhrase: newData.FavoritePhrase,
 	}
 
-	data, dataErr := repo.Collection.InsertOne(ctx, oneDoc)
-	if dataErr != nil {
-		return res, &exception.Error{
-			Code: exception.IntenalError,
-			Err:  dataErr,
-		}
+	data, err := repo.Collection.InsertOne(ctx, oneDoc)
+	if err != nil {
+		return domain.User{}, err
 	}
 
 	newId := data.InsertedID
-	newData.Id = newId.(string)
+	oneDoc.Id = newId.(string)
 
-	return newData, nil
+	return oneDoc, nil
 }
 
-func (repo *userRepository) FindByIdentifier(ctx context.Context, username, email string) (res domain.User, err *exception.Error) {
-	c := repo.Collection.FindOne(ctx, bson.M{"email": email, "username": username})
+func (repo *userRepository) FindByIdentifier(ctx context.Context, username, email string) (domain.User, error) {
+	filter := bson.M{}
+	if email != "" {
+		filter["email"] = email
+	}
+	if username != "" {
+		filter["username"] = username
+	}
 
-	c.Decode(&res)
-
-	return
+	var res domain.User
+	err := repo.Collection.FindOne(ctx, filter).Decode(&res)
+	return res, err
 }

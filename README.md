@@ -13,7 +13,10 @@ Changes to packages from third parties are also a challenge, such as changing th
 
 ## 📖 Contains
 
+- [Clean Architecture Compliance](#-clean-architecture-compliance)
 - [The 4 Layer](#-the-layer)
+- [SOLID Principles Compliance](#-solid-principles-compliance)
+- [Key Benefits Achieved](#-key-benefits-achieved)
 - [The Questions](#-the-questions)
 - [Fiber Go web framework](#-fiber-go)
 - [Air live reloading](#-air)
@@ -26,11 +29,36 @@ Changes to packages from third parties are also a challenge, such as changing th
 - [Docker Compose](#-docker-composer)
 - [Swagger API Docs](#-swagger)
 - [Logger](#-logger)
-- JWT Middleware Implement ⏳
-- Unit Testing ⏳
-- IAM Feature ⏳
-- Linter: golangci-lint ⏳
-- Husky for run lint+unit test when commit ⏳ 
+
+## 🏗️ Clean Architecture Compliance
+
+### Layer Structure (Correct Dependency Flow)
+
+```
+┌─────────────────────────────────────────────┐
+│  Frameworks & Drivers (app/infra)          │
+│  - Repositories, Config, Services          │
+└──────────────────┬──────────────────────────┘
+                   │ implements
+                   ▼
+┌─────────────────────────────────────────────┐
+│  Interface Adapters (app/interfaces)       │
+│  - Handlers, DTOs, Middleware              │
+└──────────────────┬──────────────────────────┘
+                   │ uses
+                   ▼
+┌─────────────────────────────────────────────┐
+│  Application Business Rules (app/usecases) │
+│  - Use Cases, Application Logic            │
+└──────────────────┬──────────────────────────┘
+                   │ depends on
+                   ▼
+┌─────────────────────────────────────────────┐
+│  Enterprise Business Rules (app/domain)    │
+│  - Entities, Repository Interfaces         │
+│  - Domain Services Interfaces              │
+└─────────────────────────────────────────────┘
+```
 
 ## 🍰 The Layer
 
@@ -40,6 +68,98 @@ Changes to packages from third parties are also a challenge, such as changing th
 | Interface            | /app/interfaces |
 | Usecases             | /app/usecases   |
 | Entities             | /app/domain     |
+
+---
+
+## 🎯 SOLID Principles Compliance
+
+### S - Single Responsibility Principle ✅
+
+**Before**: `UserUsecase` handled:
+- Business logic
+- Password hashing
+- Username generation
+- Token creation
+- Configuration access
+
+**After**: Each responsibility delegated to specialized services:
+```go
+type userUsecase struct {
+    repo              domain.UserRepository
+    passwordHasher    domain.PasswordHasher
+    usernameGenerator domain.UsernameGenerator
+    tokenGenerator    domain.TokenGenerator
+    config            domain.ConfigProvider
+}
+```
+
+### O - Open/Closed Principle ✅
+
+**Repositories are now open for extension**:
+- Interface defined in domain: `domain.ProductRepository`
+- Implementation in infra: `productRepository` (MongoDB)
+- Easy to add new implementations (PostgreSQL, Redis, etc.) without modifying use cases
+
+### L - Liskov Substitution Principle ✅
+
+All implementations properly substitute their interfaces:
+- `passwordHasher` implements `domain.PasswordHasher`
+- `usernameGenerator` implements `domain.UsernameGenerator`
+- `tokenGenerator` implements `domain.TokenGenerator`
+- `productRepository` implements `domain.ProductRepository`
+- `userRepository` implements `domain.UserRepository`
+
+### I - Interface Segregation Principle ✅
+
+**Focused, single-purpose interfaces**:
+```go
+// Small, focused interfaces
+type PasswordHasher interface {
+    Hash(password string) (string, error)
+    Compare(hashedPassword, password string) error
+}
+
+type UsernameGenerator interface {
+    Generate(fullname string) string
+}
+```
+
+**Validator injected as dependency** instead of created in each handler method.
+
+### D - Dependency Inversion Principle ✅
+
+**High-level modules depend on abstractions**:
+- Use cases depend on `domain.Repository` interfaces (not concrete implementations)
+- Use cases depend on `domain.Service` interfaces (not concrete implementations)
+- Handlers depend on `usecases.Usecase` interfaces (not concrete implementations)
+
+**Dependency injection in `main.go`**:
+```go
+// Infrastructure implementations
+productRepository := repository.NewProductRepository(database)
+passwordHasher := service.NewPasswordHasher()
+
+// Injected into use cases
+useCase := usecases.NewAppUseCase(
+    productRepository,
+    userRepository,
+    passwordHasher,
+    usernameGenerator,
+    tokenGenerator,
+    configProvider,
+)
+```
+
+---
+## 🎓 Key Benefits Achieved
+
+1. **Testability**: Easy to mock dependencies via interfaces
+2. **Maintainability**: Clear separation of concerns
+3. **Flexibility**: Swap implementations without changing business logic
+4. **Scalability**: Add new features without modifying existing code
+5. **Independence**: Business logic independent of frameworks/databases
+
+---
 
 ## 🧐 The Questions
 
@@ -130,7 +250,10 @@ we using zerolong, you can read to the official docs at [here](https://github.co
 
 ## 📚 References
 
-- https://github.com/khannedy/golang-clean-architecture
+- [Clean Architecture by PZN](https://github.com/khannedy/golang-clean-architecture)
 - https://github.com/evrone/go-clean-template
 - https://github.com/Creatly/creatly-backend
 - https://github.com/DoWithLogic/golang-clean-architecture
+- [Clean Architecture by Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
+- [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle)

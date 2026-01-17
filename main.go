@@ -4,6 +4,7 @@ import (
 	"github.com/ubaidillahhf/go-clarch/app/infra/config"
 	"github.com/ubaidillahhf/go-clarch/app/infra/repository"
 	"github.com/ubaidillahhf/go-clarch/app/infra/router"
+	"github.com/ubaidillahhf/go-clarch/app/infra/service"
 	"github.com/ubaidillahhf/go-clarch/app/usecases"
 	_ "github.com/ubaidillahhf/go-clarch/docs"
 )
@@ -25,24 +26,35 @@ import (
 //	@name                        Authorization
 //	@description                 JWT security accessToken. Please add it in the format "Bearer {AccessToken}" to authorize your requests.
 func main() {
-	// load config
+	// Load config
 	configuration := config.New(".env")
 
-	// error monitoring
+	// Error monitoring
 	config.SentryInit(configuration)
 
-	// conn mongo
+	// Database connection
 	database := config.NewMongoDatabase(configuration)
 
-	// Setup Repository
+	// Setup repositories (Infrastructure -> Domain)
 	productRepository := repository.NewProductRepository(database)
 	userRepository := repository.NewUserRepository(database)
 
-	// Setup Service
+	// Setup domain services (Infrastructure -> Domain)
+	passwordHasher := service.NewPasswordHasher()
+	usernameGenerator := service.NewUsernameGenerator()
+	tokenGenerator := service.NewTokenGenerator(configuration.Get("ACCESS_TOKEN_SECRET"))
+	configProvider := service.NewConfigProvider(configuration)
+
+	// Setup use cases (Application layer)
 	useCase := usecases.NewAppUseCase(
 		productRepository,
 		userRepository,
+		passwordHasher,
+		usernameGenerator,
+		tokenGenerator,
+		configProvider,
 	)
 
+	// Start router (Interface layer)
 	router.Init(useCase, configuration)
 }
